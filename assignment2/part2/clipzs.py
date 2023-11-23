@@ -222,6 +222,9 @@ class ZeroshotCLIP(nn.Module):
         # - Read the CLIP API documentation for more details:
         #   https://github.com/openai/CLIP#api
 
+        # Ensure that the input image has the correct shape
+        if image.shape != (3, 224, 224):
+            raise ValueError(f"Invalid image shape. Expected (3, 224, 224), got {image.shape}")
 
         # Forward pass to obtain image features
         image_features = self.clip_model.encode_image(image.unsqueeze(0).to(self.device))
