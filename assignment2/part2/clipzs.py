@@ -174,6 +174,9 @@ class ZeroshotCLIP(nn.Module):
                 # Compute text features
                 text_features = clip_model.encode_text(text)
 
+                # Normalize text features and squeeze to remove singleton dimension
+                text_features = text_features.squeeze(dim=0)  # Assuming the singleton dimension is at dim=0
+
                 # Normalize text features
                 text_features /= text_features.norm(dim=-1, keepdim=True)
 
@@ -184,18 +187,19 @@ class ZeroshotCLIP(nn.Module):
         # Hint:
         # - Read the CLIP API documentation for more details:
         #   https://github.com/openai/CLIP#api
-
+        print(len(prompts))
+        print(text_encodings.shape)
         return text_encodings
         #######################
         # END OF YOUR CODE    #
         #######################
 
-    def model_inference(self, image):
+    def model_inference(self, images):
         """
         Performs inference on a single image.
 
         Args:
-            image (torch.Tensor): image tensor of shape (3, 224, 224)
+            images (torch.Tensor): batch of images, (B, 3, 224, 224)
 
         Returns:
             logits (torch.Tensor): logits of shape (num_classes,)
@@ -222,16 +226,13 @@ class ZeroshotCLIP(nn.Module):
         # - Read the CLIP API documentation for more details:
         #   https://github.com/openai/CLIP#api
 
-        # Ensure that the input image has the correct shape
-        if image.shape != (3, 224, 224):
-            raise ValueError(f"Invalid image shape. Expected (3, 224, 224), got {image.shape}")
 
         # Forward pass to obtain image features
-        image_features = self.clip_model.encode_image(image.unsqueeze(0).to(self.device))
+        image_features = self.clip_model.encode_image(images.to(self.device))
         image_features /= image_features.norm(dim=-1, keepdim=True)
 
         # Compute similarity logits
-        similarity_logits = (self.text_features @ image_features.T).squeeze()
+        similarity_logits = (self.text_features @ image_features.T).T
 
         # Multiply with logit scale
         logits = similarity_logits * self.logit_scale
@@ -367,6 +368,7 @@ def main():
         idx = np.random.choice(len(dataset), num_viz, replace=False)
         images = [dataset[i][0] for i in idx]
         images = torch.stack(images).to(device)
+        print("normal:",images.shape)
         logits = clipzs.model_inference(images)
 
         c_names = ",".join(args.class_names) if args.class_names else "default"
@@ -403,6 +405,7 @@ def main():
             images = images.to(device)
 
             # Get the predicted logits using the model_inference method
+            print("images:",images.shape)
             logits = clipzs.model_inference(images)
 
             # Get the predicted class indices
