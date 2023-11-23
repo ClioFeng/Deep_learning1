@@ -187,8 +187,7 @@ class ZeroshotCLIP(nn.Module):
         # Hint:
         # - Read the CLIP API documentation for more details:
         #   https://github.com/openai/CLIP#api
-        print(len(prompts))
-        print(text_encodings.shape)
+
         return text_encodings
         #######################
         # END OF YOUR CODE    #

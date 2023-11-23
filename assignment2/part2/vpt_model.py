@@ -22,6 +22,8 @@ import torch
 import torch.nn as nn
 
 from clip import clip
+
+from assignment2.part2.clipzs import ZeroshotCLIP
 from vp import (
     PadPrompter,
     FixedPatchPrompter,
@@ -81,9 +83,11 @@ class VisualPromptCLIP(nn.Module):
         # Instructions:
         # - Given a list of prompts, compute the text features for each prompt.
         # - Return a tensor of shape (num_prompts, 512).
+        # Instantiate the ZeroshotCLIP class
+        clipzs = ZeroshotCLIP(args=args, dataset=dataset, template=template)
 
-        # Compute text features
-        text_features = self.compute_text_features(prompts)
+        text_features = clipzs.precompute_text_features(clip_model, prompts, args.device)
+
         #######################
         # END OF YOUR CODE    #
         #######################
