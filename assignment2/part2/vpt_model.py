@@ -84,7 +84,10 @@ class VisualPromptCLIP(nn.Module):
         # - Given a list of prompts, compute the text features for each prompt.
         # - Return a tensor of shape (num_prompts, 512).
         # Instantiate the ZeroshotCLIP class
-        clipzs = ZeroshotCLIP(args=args, dataset=dataset, template=template)
+
+
+        # clipzs = ZeroshotCLIP(args=args, dataset=dataset, template=template)
+        clipzs = ZeroshotCLIP
 
         text_features = clipzs.precompute_text_features(clip_model, prompts, args.device)
 
