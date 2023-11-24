@@ -87,7 +87,7 @@ class VisualPromptCLIP(nn.Module):
 
 
         # clipzs = ZeroshotCLIP(args=args, dataset=dataset, template=template)
-        clipzs = ZeroshotCLIP
+        clipzs = ZeroshotCLIP()
 
         text_features = clipzs.precompute_text_features(clip_model, prompts, args.device)
 
