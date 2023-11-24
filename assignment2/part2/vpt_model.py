@@ -90,24 +90,14 @@ class VisualPromptCLIP(nn.Module):
         # text_features = clipzs.precompute_text_features(clip_model, prompts, args.device)
 
         with torch.no_grad():
-            text_encodings = []  # List to store text encodings
-            for prompt in prompts:
-                # Tokenize the prompt
-                text = clip.tokenize([prompt]).to(args.device)
+            # Tokenize the prompt
+            text = clip.tokenize([prompts]).to(args.device)
 
-                # Compute text features
-                text_features = clip_model.encode_text(text)
+            # Compute text features
+            text_features = clip_model.encode_text(text)
 
-                # Normalize text features and squeeze to remove singleton dimension
-                text_features = text_features.squeeze(dim=0)  # Assuming the singleton dimension is at dim=0
-
-                # Normalize text features
-                text_features /= text_features.norm(dim=-1, keepdim=True)
-
-                text_encodings.append(text_features)
-
-            # Stack text encodings into a tensor
-            text_features = torch.stack(text_encodings)
+            # Normalize text features
+            text_features /= text_features.norm(dim=-1, keepdim=True)
 
         #######################
         # END OF YOUR CODE    #
@@ -143,16 +133,6 @@ class VisualPromptCLIP(nn.Module):
 
         # Implement the forward function
         prompt_image = self.prompt_learner(image)
-
-
-        # image_features = self.clip_model(prompt_image)
-
-        # Encode the prompt text using CLIP model
-        # print(prompt_image)
-        # print(self.prompt_learner)
-        # prompt_text = self.prompt_learner.get_prompt() # Use the prompts used during initialization
-        # prompt_text = clip.tokenize([prompt_text]).to(image.device)
-        # text_features = self.clip_model.encode_text(prompt_text)
 
         # Compute the image features using the CLIP model
         image_features = self.clip_model.encode_image(prompt_image)

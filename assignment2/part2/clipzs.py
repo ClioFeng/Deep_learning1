@@ -166,29 +166,38 @@ class ZeroshotCLIP(nn.Module):
         # - Normalize the text features.
         # - Return a tensor of shape (num_prompts, 512).
         with torch.no_grad():
-            text_encodings = []  # List to store text encodings
-            for prompt in prompts:
-                # Tokenize the prompt
-                text = clip.tokenize([prompt]).to(device)
+            # text_encodings = []  # List to store text encodings
+            # for prompt in prompts:
+            #     # Tokenize the prompt
+            #     text = clip.tokenize([prompt]).to(device)
+            #
+            #     # Compute text features
+            #     text_features = clip_model.encode_text(text)
+            #
+            #     # Normalize text features and squeeze to remove singleton dimension
+            #     text_features = text_features.squeeze(dim=0)  # Assuming the singleton dimension is at dim=0
+            #
+            #     # Normalize text features
+            #     text_features /= text_features.norm(dim=-1, keepdim=True)
+            #
+            #     text_encodings.append(text_features)
+            #
+            # # Stack text encodings into a tensor
+            # text_encodings = torch.stack(text_encodings)
 
-                # Compute text features
-                text_features = clip_model.encode_text(text)
+            # Tokenize the prompt
+            text = clip.tokenize([prompts]).to(device)
 
-                # Normalize text features and squeeze to remove singleton dimension
-                text_features = text_features.squeeze(dim=0)  # Assuming the singleton dimension is at dim=0
+            # Compute text features
+            text_features = clip_model.encode_text(text)
 
-                # Normalize text features
-                text_features /= text_features.norm(dim=-1, keepdim=True)
-
-                text_encodings.append(text_features)
-
-            # Stack text encodings into a tensor
-            text_encodings = torch.stack(text_encodings)
+            # Normalize text features
+            text_features /= text_features.norm(dim=-1, keepdim=True)
         # Hint:
         # - Read the CLIP API documentation for more details:
         #   https://github.com/openai/CLIP#api
 
-        return text_encodings
+        return text_features
         #######################
         # END OF YOUR CODE    #
         #######################
@@ -404,7 +413,6 @@ def main():
             images = images.to(device)
 
             # Get the predicted logits using the model_inference method
-            print("images:",images.shape)
             logits = clipzs.model_inference(images)
 
             # Get the predicted class indices
