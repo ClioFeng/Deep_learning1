@@ -143,9 +143,20 @@ class VisualPromptCLIP(nn.Module):
 
         # Implement the forward function
         prompt_image = self.prompt_learner(image)
-        image_features = self.clip_model(prompt_image)
+
+
+        # image_features = self.clip_model(prompt_image)
+
+        # Encode the prompt text using CLIP model
+        prompt_text = " ".join(self.prompt_learner.prompts)  # Use the prompts used during initialization
+        prompt_text = clip.tokenize([prompt_text]).to(image.device)
+        text_features = self.clip_model.encode_text(prompt_text)
+
+        # Compute the image features using the CLIP model
+        image_features = self.clip_model.encode_image(prompt_image)
+
         image_features = image_features / image_features.norm(dim=-1, keepdim=True)
-        logits = torch.matmul(image_features, self.text_features.T) * self.logit_scale
+        logits = torch.matmul(image_features, text_features.T) * self.logit_scale
         return logits
         #######################
         # END OF YOUR CODE    #
