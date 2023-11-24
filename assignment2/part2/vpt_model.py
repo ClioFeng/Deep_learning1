@@ -23,7 +23,7 @@ import torch.nn as nn
 
 from clip import clip
 
-from assignment2.part2.clipzs import ZeroshotCLIP
+from clipzs import ZeroshotCLIP
 from vp import (
     PadPrompter,
     FixedPatchPrompter,
