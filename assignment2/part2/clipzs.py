@@ -417,9 +417,11 @@ def main():
 
             # Get the predicted class indices
             _, predicted = logits.max(1)
-
+            print(logits,predicted)
             # Compute accuracy and update the meter
             accuracy = (predicted == 0).float().mean().item()  # Assuming the desired class index is 0
+
+
             top1.update(accuracy, images.size(0))
 
     #######################
