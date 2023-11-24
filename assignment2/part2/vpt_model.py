@@ -91,7 +91,7 @@ class VisualPromptCLIP(nn.Module):
 
         with torch.no_grad():
             # Tokenize the prompt
-            text = clip.tokenize([prompts]).to(args.device)
+            text = clip.tokenize(prompts).to(args.device)
 
             # Compute text features
             text_features = clip_model.encode_text(text)
