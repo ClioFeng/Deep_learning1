@@ -148,7 +148,8 @@ class VisualPromptCLIP(nn.Module):
         # image_features = self.clip_model(prompt_image)
 
         # Encode the prompt text using CLIP model
-        prompt_text = " ".join(self.prompt_learner.prompts)  # Use the prompts used during initialization
+        print(self.prompt_learner)
+        prompt_text = self.prompt_learner.get_prompt() # Use the prompts used during initialization
         prompt_text = clip.tokenize([prompt_text]).to(image.device)
         text_features = self.clip_model.encode_text(prompt_text)
 
