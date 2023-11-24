@@ -85,11 +85,29 @@ class VisualPromptCLIP(nn.Module):
         # - Return a tensor of shape (num_prompts, 512).
         # Instantiate the ZeroshotCLIP class
 
-
+        # but the problem is there is no args.name, so how to initatiate?
         # clipzs = ZeroshotCLIP(args=args, dataset=dataset, template=template)
-        clipzs = ZeroshotCLIP()
+        # text_features = clipzs.precompute_text_features(clip_model, prompts, args.device)
 
-        text_features = clipzs.precompute_text_features(clip_model, prompts, args.device)
+        with torch.no_grad():
+            text_encodings = []  # List to store text encodings
+            for prompt in prompts:
+                # Tokenize the prompt
+                text = clip.tokenize([prompt]).to(args.device)
+
+                # Compute text features
+                text_features = clip_model.encode_text(text)
+
+                # Normalize text features and squeeze to remove singleton dimension
+                text_features = text_features.squeeze(dim=0)  # Assuming the singleton dimension is at dim=0
+
+                # Normalize text features
+                text_features /= text_features.norm(dim=-1, keepdim=True)
+
+                text_encodings.append(text_features)
+
+            # Stack text encodings into a tensor
+            text_features = torch.stack(text_encodings)
 
         #######################
         # END OF YOUR CODE    #
