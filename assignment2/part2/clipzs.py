@@ -415,11 +415,13 @@ def main():
             # Get the predicted logits using the model_inference method
             logits = clipzs.model_inference(images)
 
+
             # Get the predicted class indices
             _, predicted = logits.max(1)
-            print(logits,predicted)
+            print("logits", logits)
+            print("predicted:", predicted)
             # Compute accuracy and update the meter
-            accuracy = (predicted == 0).float().mean().item()  # Assuming the desired class index is 0
+            accuracy = (predicted == 1).float().mean().item()  # Assuming the desired class index is 0
 
 
             top1.update(accuracy, images.size(0))
