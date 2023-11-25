@@ -408,7 +408,7 @@ def main():
 
     clipzs.eval()  # Set the model to evaluation mode
     with torch.no_grad():
-        for images, _ in tqdm(loader, desc=f"Running inference on {args.dataset}/{args.split}"):
+        for images, labels in tqdm(loader, desc=f"Running inference on {args.dataset}/{args.split}"):
 
             images = images.to(device)
 
@@ -420,8 +420,9 @@ def main():
             _, predicted = logits.max(1)
             print("logits", logits)
             print("predicted:", predicted)
+            print("labels", labels)
             # Compute accuracy and update the meter
-            accuracy = (predicted == 1).float().mean().item()  # Assuming the desired class index is 0
+            accuracy = (predicted == labels).float().mean().item()  # Assuming the desired class index is 0
 
 
             top1.update(accuracy, images.size(0))
